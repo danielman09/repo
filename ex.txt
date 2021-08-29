@@ -1,0 +1,98 @@
+https://pdfslide.tips/documents/exercitii-rezolvate-baze-de-date-sql.html
+
+Instructiunea SELECT si diferite clauze ale acesteia
+
+1. Să se afişeze numele angajaţilor, concatenat cu jobul, separat de o virgulă şi un spaţiu, sub aliasul  ” Angajat si titlu”.
+/*SELECT ename AS angajat,', ',job AS titlu FROM emp*/ 
+
+2. Să se afişeze conţinutul tabelei emp şi apoi numărul de înregistrări.
+/*SELECT * FROM emp*/ /*SELECT COUNT(*) AS 'numar inregistrari' from emp*/ 
+
+3. Să se afişeze numele angajaţilor a căror a treia literă a numelor este A.
+SELECT ename FROM emp WHERE ename LIKE '__a%';
+
+4. Să se afişeze angajaţii din departamentul 30, folosind alias-uri adecvate.
+SELECT ename AS invingatorii FROM `emp`WHERE iddept=3 GROUP BY ename;
+
+5. Afişaţi numărul de manageri existenţi în tabela de angajaţi.
+SELECT COUNT(mgr) AS manageri FROM `emp`
+SELECT COUNT(DISTINCT mgr) AS manageri FROM `emp`
+
+
+Instructiunea SELECT in subinterogari
+
+1. Să se afişeze numele şi data angajării pentru toţi angajaţii din acelaşi departament cu Ana (excludeti Ana)
+SELECT ename,hiredata FROM emp WHERE iddept IN (SELECT iddept FROM emp where ename='Ana') AND ename<>'Ana'
+
+2. Să se afişeze codul şi numele angajaţilor care câştigă mai mult decât media salariilor din firmă; sortaţi rezultatul  în  ordinea descendentă a salariilor.
+SELECT idemp,ename FROM emp WHERE sal>(SELECT AVG(sal) from emp ORDER BY sal DESC)
+
+3. Afişaţi codul şi numele tuturor angajaţilor care lucrează într-un departament care are şi angajaţi al căror nume conţine pe D sau o.
+SELECT idemp,ename FROM emp WHERE iddept IN(SELECT iddept FROM emp where ename LIKE'_o%' OR ename LIKE'D%')
+
+4. Afişaţi numele, numărul departamentului şi jobul   tuturor angajaţilor a căror locaţie de departament este Alba.
+SELECT ename,iddept,job FROM emp WHERE iddept IN(SELECT iddept FROM dept where loc ='Alba')
+
+5. Afişaţi numele şi salariul angajaţilor subordonaţi lui King.
+SELECT ename,sal
+FROM emp WHERE mgr IN (SELECT idemp FROM emp WHERE ename = 'Ioana')
+
+6. Afişaţi numărul departamentului, numele şi jobul angajaţilor din departamentul Sales.
+SELECT iddept,ename,job FROM emp WHERE iddept IN(SELECT iddept FROM dept WHERE dname='vanzari')
+
+7. Afişaţi codul, numele şi salariul angajaţilor  care câştigă mai mult decât salariul mediu din firmă şi care lucrează în departamentele 
+care au cel puţin un angajat care are litera T în nume.
+SELECT iddept,ename,sal FROM emp WHERE sal>(SELECT AVG(sal) FROM emp WHERE ename like '%_r%')
+
+
+Instructiunea SELECT in gruparea datelor(functii de grup);
+
+1. Salariul maxim, minim, suma şi media acestuia  pentru toţi angajaţii; rotunjiţi rezultatul la prima poziţie zecimală.
+SELECT MIN(sal) AS minim,  
+       MAX(sal) AS maxim,
+       ROUND(SUM(sal),2) as suma,
+       ROUND(AVG(sal),1) as media
+FROM emp
+
+2. Afişaţi maximul, minimul şi suma salariilor pentru fiecare tip de job.
+SELECT MIN(sal) AS salariu_minim,  
+       MAX(sal) AS salariu_maxim,
+       SUM(sal) AS suma_salariu,job
+FROM emp
+GROUP BY job
+
+3. Afişaţi numărul de persoane cu acelaşi job.
+SELECT COUNT(ename) AS numar_persoane,job
+FROM emp
+GROUP BY job
+
+4. Afişaţi codul managerului şi cel mai mic salariu al angajaţilor care-l au ca manager ; 
+
+excludeţi angajaţii care nu au manager şi grupurile de angajaţi care au salariul minim mai mic decât 350; sortaţi rezultatul în ordinea descrescătoare a salariului. 
+SELECT ename,mgr,MIN(sal)
+FROM emp WHERE mgr IS NOT NULL 
+GROUP by mgr
+HAVING MIN(sal)<350
+ORDER by sal DESC
+
+5. Afişaţi numele şi locaţia departamentului, nr. de angajaţi şi salariul mediu pentru toţi angajaţii din acel departament. 
+
+6. Să se afişeze numărul de angajaţi din fiecare an calendaristic.
+SELECT COUNT(*) AS numar_angajati
+FROM emp
+GROUP BY hiredata
+
+7. Să se afişeze numărul departamentului,  joburile din departament (tipurile) şi suma  salariilor pentru joburile respective.
+
+SELECT iddept,job AS tip_job,SUM(sal) AS suma_salariilor
+FROM emp
+GROUP BY job
+
+INSERT INTO `angajati` (`cod_angajat`,`nume`,`prenume`,`varsta`,`functie`,`cod_oficiu`,`data_angajarii`,`suma_planificata`) 
+VALUES (`CV`,`Ciobanu`,`Vasile`,`38`,`reprezentant`,`ED`,`12-07-2000`,`2000`)
+
+
+
+https://www.yumpu.com/ro/document/read/41734354/culegere-de-probleme-ai-exemple-la-baze-de-date
+https://dokumen.tips/documents/exercitii-access-rezolvate.html
+https://www.w3schools.com/sql/sql_join_inner.asp
